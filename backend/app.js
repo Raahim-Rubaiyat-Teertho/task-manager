@@ -39,3 +39,16 @@ app.get('/users/:id', (req, res) => {
         res.status(500).json({mssg : 'Document Not Found'})
       })
 })
+
+app.get('/users/name/:name', (req, res) => {
+    db.collection('user')
+      .findOne({uname : req.params.name})
+      .then(
+        users => {
+            res.status(200).json(users)
+        }
+      )
+      .catch(error => {
+        res.status(500).json({mssg : 'Document Not Found'})
+      })
+})
