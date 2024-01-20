@@ -33,17 +33,11 @@ export default function ProfileForm() {
   });
 
   const onSubmit = async (values) => {
-    const lnk = `http://127.0.0.1:8080/users/name/${values.username}`;
+    const lnk = `http://localhost:8080/users/name/${values.username}`;
     const lnk_fetch = await fetch(lnk);
     const lnk_json = await lnk_fetch.json();
     console.log(lnk_json);
-    if(values.password != lnk_json.password) {
-      alert('Wrong password');
-    }
-
-    else {
-      //write access code
-    }
+    
   };
 
   return (
