@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { HandleLogin, getSessionData } from "./handleSession";
+import { useState } from "react";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -32,11 +34,28 @@ export default function ProfileForm() {
     resolver: zodResolver(formSchema),
   });
 
+  const [wrong, setWrong] = useState(false);
+
   const onSubmit = async (values) => {
     const lnk = `http://localhost:8080/users/name/${values.username}`;
     const lnk_fetch = await fetch(lnk);
     const lnk_json = await lnk_fetch.json();
-    console.log(lnk_json);
+
+    if(lnk_json == null) {
+      setWrong(true)
+    }
+
+    else {
+      if(values.username == lnk_json.uname && values.password == lnk_json.pass) {
+        console.log('allow');
+        HandleLogin(values);
+        setWrong(false)
+      }
+  
+      else {
+        setWrong(true);
+      }
+    }
     
   };
 
@@ -70,6 +89,15 @@ export default function ProfileForm() {
               <FormControl>
                 <Input placeholder="password" {...field} type='password' />
               </FormControl>
+              {
+                wrong ? (
+                  <FormDescription className='text-red-600'>
+                    Invalid username or password
+                  </FormDescription>
+                ) : (
+                  <></>
+                )
+              }
               <FormMessage />
             </FormItem>
           )}
